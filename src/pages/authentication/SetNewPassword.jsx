@@ -1,10 +1,12 @@
 import loginImage from "../../assets/images/login-image.jpg";
 import { Button, Input, Typography } from "antd";
 import { useForm, Controller } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 function SetNewPassword() {
+  const router = useNavigate();
   const {
     handleSubmit,
     control,
@@ -14,6 +16,7 @@ function SetNewPassword() {
 
   const onSubmit = (data) => {
     console.log(data);
+     router("/");
     // Handle password reset logic here
   };
 

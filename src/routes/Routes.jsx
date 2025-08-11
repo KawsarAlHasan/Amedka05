@@ -6,6 +6,8 @@ import ForgotPassword from "../pages/authentication/ForgotPassword";
 import CheckCode from "../pages/authentication/CheckCode";
 import SetNewPassword from "../pages/authentication/SetNewPassword";
 import Signup from "../pages/authentication/Signup";
+import VerifyCode from "../pages/authentication/VerifyCode";
+import Home from "../pages/home/Home";
 
 export const router = createBrowserRouter([
   {
@@ -29,51 +31,18 @@ export const router = createBrowserRouter([
     element: <Signup />,
   },
   {
+    path: "/verify-code",
+    element: <VerifyCode />,
+  },
+  {
     path: "/",
     element: <MainLayout />,
-    // children: [
-    //   {
-    //     path: "/",
-    //     element: <Dashboard />,
-    //   },
-    //   {
-    //     path: "/users",
-    //     element: <Users />,
-    //   },
-    //   {
-    //     path: "/flagged-content",
-    //     element: <FlaggedContent />,
-    //   },
-    //   {
-    //     path: "/payouts",
-    //     element: <Payouts />,
-    //   },
-    //   {
-    //     path: "/tasks",
-    //     element: <Tasks />,
-    //   },
-    //   {
-    //     path: "/leaderboard",
-    //     element: <Leaderboard />,
-    //   },
-    //   {
-    //     path: "/profile",
-    //     element: <Profile />,
-    //   },
-    //   {
-    //     path: "/terms-conditions",
-    //     element: <TermsConditions />,
-    //   },
-    //   {
-    //     path: "/privacy-policy",
-    //     element: <PrivacyPolicy />,
-    //   },
-
-    //   {
-    //     path: "/test",
-    //     element: <Test />,
-    //   },
-    // ],
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+    ],
   },
 
   {

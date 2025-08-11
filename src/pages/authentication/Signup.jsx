@@ -1,19 +1,23 @@
 import loginImage from "../../assets/images/login-image.jpg";
-import { Button, Input, Typography, Checkbox } from "antd";
+import { Button, Input, Typography } from "antd";
 import { useForm, Controller } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 function Signup() {
+  const router = useNavigate();
   const {
     handleSubmit,
     control,
     formState: { errors },
+    watch,
   } = useForm();
 
   const onSubmit = (data) => {
     console.log(data);
-    // Handle login logic here
+      router("/verify-code");
+    // Handle signup logic here
   };
 
   return (
@@ -47,31 +51,31 @@ function Signup() {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-                  {/* full name Field */}
+                  {/* Name Field */}
                   <div className="ant-form-item !mb-6">
                     <label className="ant-form-item-label">
-                      <span className="ant-form-item-no-colon">Full Name</span>
+                      <span className="ant-form-item-no-colon">Name</span>
                     </label>
                     <div className="ant-form-item-control">
                       <Controller
-                        name="fullName"
+                        name="name"
                         control={control}
                         rules={{
-                          required: "Full Name is required",
+                          required: "Name is required",
                         }}
                         render={({ field }) => (
                           <Input
                             {...field}
                             size="large"
-                            placeholder="Enter your full name"
+                            placeholder="Enter your name"
                             className="!py-2 !rounded-lg"
-                            status={errors.fullName ? "error" : ""}
+                            status={errors.name ? "error" : ""}
                           />
                         )}
                       />
-                      {errors.fullName && (
+                      {errors.name && (
                         <div className="ant-form-item-explain-error text-red-500">
-                          {errors.fullName.message}
+                          {errors.name.message}
                         </div>
                       )}
                     </div>
@@ -92,7 +96,7 @@ function Signup() {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                             message: (
                               <span className="text-red-600">
-                                Invalid email address{" "}
+                                Invalid email address
                               </span>
                             ),
                           },
@@ -108,15 +112,45 @@ function Signup() {
                         )}
                       />
                       {errors.email && (
-                        <div className="ant-form-item-explain-error">
+                        <div className="ant-form-item-explain-error text-red-500">
                           {errors.email.message}
                         </div>
                       )}
                     </div>
                   </div>
 
+                  {/* Phone Field */}
+                  <div className="ant-form-item !mb-6">
+                    <label className="ant-form-item-label">
+                      <span className="ant-form-item-no-colon">Phone</span>
+                    </label>
+                    <div className="ant-form-item-control">
+                      <Controller
+                        name="phone"
+                        control={control}
+                        rules={{
+                          required: "Phone number is required",
+                        }}
+                        render={({ field }) => (
+                          <Input
+                            {...field}
+                            size="large"
+                            placeholder="Enter your phone number"
+                            className="!py-2 !rounded-lg"
+                            status={errors.phone ? "error" : ""}
+                          />
+                        )}
+                      />
+                      {errors.phone && (
+                        <div className="ant-form-item-explain-error text-red-500">
+                          {errors.phone.message}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
                   {/* Password Field */}
-                  <div className="ant-form-item !mb-4">
+                  <div className="ant-form-item !mb-6">
                     <label className="ant-form-item-label">
                       <span className="ant-form-item-no-colon">Password</span>
                     </label>
@@ -146,8 +180,40 @@ function Signup() {
                         )}
                       />
                       {errors.password && (
-                        <div className="ant-form-item-explain-error">
+                        <div className="ant-form-item-explain-error text-red-500">
                           {errors.password.message}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Confirm Password Field */}
+                  <div className="ant-form-item !mb-6">
+                    <label className="ant-form-item-label">
+                      <span className="ant-form-item-no-colon">Confirm Password</span>
+                    </label>
+                    <div className="ant-form-item-control">
+                      <Controller
+                        name="confirmPassword"
+                        control={control}
+                        rules={{
+                          required: "Please confirm your password",
+                          validate: (value) =>
+                            value === watch("password") || "Passwords do not match",
+                        }}
+                        render={({ field }) => (
+                          <Input.Password
+                            {...field}
+                            size="large"
+                            placeholder="Confirm your password"
+                            className="!py-2 !rounded-lg"
+                            status={errors.confirmPassword ? "error" : ""}
+                          />
+                        )}
+                      />
+                      {errors.confirmPassword && (
+                        <div className="ant-form-item-explain-error text-red-500">
+                          {errors.confirmPassword.message}
                         </div>
                       )}
                     </div>

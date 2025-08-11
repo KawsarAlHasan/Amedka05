@@ -1,10 +1,14 @@
 import loginImage from "../../assets/images/login-image.jpg";
 import { Button, Input, Typography, Checkbox } from "antd";
 import { useForm, Controller } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 function Login() {
+
+  const router = useNavigate();
+
   const {
     handleSubmit,
     control,
@@ -13,6 +17,7 @@ function Login() {
 
   const onSubmit = (data) => {
     console.log(data);
+     router("/");
     // Handle login logic here
   };
 
