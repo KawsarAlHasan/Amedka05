@@ -16,7 +16,7 @@ const products = Array(10).fill({
 function WeeklyDeals() {
   return (
     <div>
-      <div className=" py-10 px-4 sm:px-6 lg:px-10">
+      <div className=" py-10">
         {/* Product Grid */}
         <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4">
           <div className=" bg-[#2b2b2b] rounded-lg p-6 flex justify-between col-span-2">

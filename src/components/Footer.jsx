@@ -9,7 +9,7 @@ import {
 
 function Footer() {
   return (
-    <footer className=" px-6 md:px-16 py-10">
+    <footer className="container mx-auto px-2 md:px-0">
       {/* Newsletter */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-600 pb-6 gap-6">
         <div>

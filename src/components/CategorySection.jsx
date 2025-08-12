@@ -22,7 +22,7 @@ const categories = [
 function CategorySection() {
   return (
     <div>
-      <div className="py-10 px-5">
+      <div className="py-10">
         {/* Top Label */}
         <p className="text-blue-400 font-semibold mb-2">Categories</p>
 
@@ -42,8 +42,8 @@ function CategorySection() {
               }}
               bodyStyle={{ padding: "20px" }}
             >
-              <div>{cat.icon}</div>
-              <p className="mt-2 text-sm">{cat.name}</p>
+              <div className="flex justify-center">{cat.icon}</div>
+              <p className="!mt-[5px] text-sm">{cat.name}</p>
             </Card>
           ))}
         </div>

@@ -48,7 +48,7 @@ const products = [
 function BestSellingProducts() {
   return (
     <div>
-      <div className=" py-10 px-5">
+      <div className=" py-10">
         {/* Section Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
