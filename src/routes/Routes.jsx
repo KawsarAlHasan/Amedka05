@@ -8,6 +8,7 @@ import SetNewPassword from "../pages/authentication/SetNewPassword";
 import Signup from "../pages/authentication/Signup";
 import VerifyCode from "../pages/authentication/VerifyCode";
 import Home from "../pages/home/Home";
+import ProductDetails from "../pages/productDetails/ProductDetails";
 
 export const router = createBrowserRouter([
   {
@@ -42,8 +43,14 @@ export const router = createBrowserRouter([
         path: "/",
         element: <Home />,
       },
+      {
+        path: "/product/:id",
+        element: <ProductDetails />,
+      },
     ],
   },
+
+  // https://www.figma.com/design/Ll2FAwUeq2rAMh022t616B/Websheet?node-id=79-372&t=t6EgEbLwaTlLW2nl-0
 
   {
     path: "*",

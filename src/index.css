@@ -2,6 +2,14 @@
 
 
 
+.custom-tabs .ant-tabs-tab-btn {
+  color: white !important;
+}
+.custom-tabs .ant-tabs-ink-bar {
+  background-color: #3b82f6 !important;
+}
+
+
 /* npm uninstall react react-dom */
 /* npm install react@18 react-dom@18 */
 /* rm -rf node_modules package-lock.json

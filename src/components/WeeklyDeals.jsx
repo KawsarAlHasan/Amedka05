@@ -3,6 +3,7 @@ import { AiOutlineHeart } from "react-icons/ai";
 import { FaArrowRight } from "react-icons/fa";
 import productImage from "../assets/images/car.png";
 import fordImage from "../assets/images/car-demo.png";
+import { Link } from "react-router-dom";
 
 const products = Array(10).fill({
   id: 1,
@@ -75,9 +76,12 @@ function WeeklyDeals() {
                     ${product.oldPrice}
                   </span>
                 </div>
-                <button className="mt-4 bg-blue-500 text-white w-full py-2 rounded-md hover:bg-blue-600 transition">
+                <Link
+                  to={`/product/${product.id}`}
+                  className="block text-center mt-4 bg-blue-500 text-white w-full py-2 rounded-md hover:bg-blue-600 transition"
+                >
                   View
-                </button>
+                </Link>
               </div>
             </div>
           ))}

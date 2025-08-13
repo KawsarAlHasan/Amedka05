@@ -44,9 +44,17 @@ const products = [
     oldPrice: 32.8,
     isHot: true,
   },
+  {
+    id: 6,
+    name: "Kvidio Headphone 512",
+    image: productImage,
+    price: 28.85,
+    oldPrice: 32.8,
+    isHot: true,
+  },
 ];
 
-function BestSellingProducts() {
+function SimillarProducts() {
   return (
     <div>
       <div className=" py-10">
@@ -54,7 +62,7 @@ function BestSellingProducts() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <p className="text-blue-400 font-semibold mb-1">Featured Product</p>
-            <h2 className="text-3xl font-bold">Best Selling Products</h2>
+            <h2 className="text-3xl font-bold">Simillar Products</h2>
           </div>
           <button className="bg-blue-500 px-6 py-2 rounded-md font-medium hover:bg-blue-600 transition">
             View All
@@ -62,7 +70,7 @@ function BestSellingProducts() {
         </div>
 
         {/* Product Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
           {products.map((product) => (
             <div
               key={product.id}
@@ -113,4 +121,4 @@ function BestSellingProducts() {
   );
 }
 
-export default BestSellingProducts;
+export default SimillarProducts;
