@@ -5,6 +5,8 @@ import Footer from "../components/Footer";
 import ScrollToTop from "./ScrollToTop";
 import { Breadcrumb } from "antd";
 import aiImage from "../assets/12122375 1.png";
+import InitialLoginModel from "../components/InitialLoginModel";
+import InitialCurrencyAgent from "../components/InitialCurrencyAgent";
 
 function MainLayout() {
   const location = useLocation();
@@ -15,6 +17,8 @@ function MainLayout() {
       <div>
         <Navbar />
         <ScrollToTop />
+        <InitialLoginModel />
+        <InitialCurrencyAgent />
 
         <div className="container mx-auto px-2 md:px-0  ">
           {location.pathname !== "/" && (
@@ -55,7 +59,10 @@ function MainLayout() {
             </div>
           )}
 
-          <Link to="/ai-chat" className="custom-primary-btn flex items-center gap-2 py-2 px-8 w-[250px] rounded-full cursor-pointer fixed top-[90vh] right-0 !z-100">
+          <Link
+            to="/ai-chat"
+            className="custom-primary-btn flex items-center gap-2 py-2 px-8 w-[250px] rounded-full cursor-pointer fixed top-[90vh] right-0 !z-100"
+          >
             <img src={aiImage} alt="logo" />
             AI Shopping Helper
           </Link>

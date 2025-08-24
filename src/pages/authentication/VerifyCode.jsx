@@ -22,6 +22,7 @@ function VerifyCode() {
 
   const onSubmit = (data) => {
     console.log(data);
+    // localStorage.setItem("otp", data.otp);
     // Verify logic here
     router("/");
   };
