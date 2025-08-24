@@ -3,15 +3,6 @@ import { Button, Radio, Tag, Tooltip, message, Divider, Image } from "antd";
 import { AiOutlineHeart } from "react-icons/ai";
 import { LuShare2 } from "react-icons/lu";
 
-/**
- * Demo Product Detail Page
- * Tech: React + TailwindCSS + Ant Design + react-icons
- * Notes:
- * - This is a single-file component you can drop into a React app.
- * - Assumes Tailwind is already configured. AntD can be installed with `npm i antd`.
- * - Replace demo data with real API later.
- */
-
 const DEMO_PRODUCT = {
   id: "sku-demo-001",
   title: "Marketside Fresh Organic Bananas, Bunch",
@@ -25,11 +16,11 @@ const DEMO_PRODUCT = {
   ],
   // Demo gallery (jacket images to match screenshot vibe)
   images: [
-    "https://img.freepik.com/free-psd/black-isolated-car_23-2151852894.jpg",
-    "https://i.pinimg.com/736x/2e/ff/4b/2eff4bb45cbd1b520ed30cc3939471d1.jpg",
     "https://pngimg.com/d/porsche_PNG10622.png",
-    "https://img.lovepik.com/free-png/20210926/lovepik-a-car-png-image_401434180_wh1200.png",
     "https://www.pngplay.com/wp-content/uploads/8/Red-Sports-Car-Transparent-PNG.png",
+    "https://pngimg.com/d/porsche_PNG10622.png",
+    "https://www.pngplay.com/wp-content/uploads/8/Red-Sports-Car-Transparent-PNG.png",
+    "https://pngimg.com/d/porsche_PNG10622.png",
   ],
   cta: {
     label: "Buy on Hippobuy",
@@ -72,13 +63,13 @@ export default function ProductDetailDemo() {
       <div className="   ">
         {/* Grid: Gallery + Details */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <div className="h-screen flex flex-col justify-between">
+          <div className="h-[80vh] flex flex-col justify-between">
             {/* Main Image */}
             <div className="flex-1 border-2 border-gray-400 rounded-2xl overflow-hidden flex items-center justify-center">
               <Image
                 src={DEMO_PRODUCT.images[selectedImage]}
                 alt={DEMO_PRODUCT.title}
-                preview={false}
+                // preview={false}
                 className="object-contain w-full h-full"
               />
             </div>
@@ -89,7 +80,7 @@ export default function ProductDetailDemo() {
                 <button
                   key={src}
                   onClick={() => setSelectedImage(idx)}
-                  className={`relative rounded-xl overflow-hidden aspect-square border transition-all ${
+                  className={`cursor-pointer relative rounded-xl overflow-hidden aspect-square border transition-all ${
                     selectedImage === idx
                       ? "border-blue-500 ring-2 ring-blue-500"
                       : "border-neutral-500 hover:border-gray-400"
@@ -111,7 +102,9 @@ export default function ProductDetailDemo() {
               {DEMO_PRODUCT.title}
             </h1>
 
-            <div className="mt-6 flex items-end gap-4">
+            <Divider className="bg-gray-400 !my-[-10px]" />
+
+            <div className="my-6 flex items-end gap-4">
               <div className="text-4xl font-bold text-blue-400">
                 {formattedPrice}
               </div>
@@ -120,27 +113,25 @@ export default function ProductDetailDemo() {
               </div>
             </div>
 
-            <Divider className="bg-neutral-800" />
-
             {/* Size */}
             <div className="mb-6">
               <div className="text-sm text-neutral-400 mb-2">Size</div>
-              <Radio.Group
-                value={size}
-                onChange={(e) => setSize(e.target.value)}
-                className="flex gap-3"
-                optionType="button"
-              >
-                {DEMO_PRODUCT.sizes.map((s) => (
-                  <Radio.Button
-                    key={s}
-                    value={s}
-                    className="!bg-transparent !text-white !border-neutral-700 hover:!border-neutral-500 !rounded-xl px-4 py-2"
+              <div className="flex gap-3">
+                {DEMO_PRODUCT.sizes.map((s, index) => (
+                  <Tag.CheckableTag
+                    key={index}
+                    checked={size === s}
+                    onChange={() => setSize(s)}
+                    className={`!px-5 !py-2 rounded-xl border ${
+                      size === s
+                        ? "!bg-transparent !text-white !border-blue-500"
+                        : "!bg-transparent !text-neutral-300 !border-neutral-400 !hover:border-neutral-300"
+                    }`}
                   >
                     {s}
-                  </Radio.Button>
+                  </Tag.CheckableTag>
                 ))}
-              </Radio.Group>
+              </div>
             </div>
 
             {/* Color */}
@@ -152,10 +143,10 @@ export default function ProductDetailDemo() {
                     key={c.value}
                     checked={color === c.value}
                     onChange={() => setColor(c.value)}
-                    className={`px-5 py-2 rounded-xl border ${
+                    className={`!px-5 !py-2 rounded-xl border ${
                       color === c.value
-                        ? "!bg-transparent !text-white border-blue-500"
-                        : "!bg-transparent !text-neutral-300 border-neutral-700 hover:border-neutral-500"
+                        ? "!bg-transparent !text-white !border-blue-500"
+                        : "!bg-transparent !text-neutral-300 !border-neutral-400 !hover:border-neutral-300"
                     }`}
                   >
                     {c.name}
@@ -169,7 +160,7 @@ export default function ProductDetailDemo() {
               <Button
                 type="primary"
                 size="large"
-                className="!w-full !h-12 !rounded-xl !text-white"
+                className="!w-full !h-12 !rounded-xl custom-primary-btn"
                 onClick={() =>
                   message.success("Redirecting to Hippobuy… (demo)")
                 }

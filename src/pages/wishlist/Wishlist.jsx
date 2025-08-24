@@ -1,8 +1,8 @@
 import React from "react";
 import { AiOutlineHeart } from "react-icons/ai";
-import productImage from "../assets/images/car.png";
+import productImage from "../../assets/images/car.png";
 import { Link } from "react-router-dom";
-import ProductCard from "./ProductCard";
+import ProductCard from "../../components/ProductCard";
 
 const products = [
   {
@@ -55,23 +55,14 @@ const products = [
   },
 ];
 
-function SimillarProducts() {
+function Wishlist() {
   return (
     <div>
       <div className=" py-10">
-        {/* Section Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <p className="text-blue-400 font-semibold mb-1">Featured Product</p>
-            <h2 className="text-3xl font-bold">Simillar Products</h2>
-          </div>
-          <button className="custom-primary-btn px-6 py-2 rounded-md font-medium transition">
-            View All
-          </button>
-        </div>
+      
 
         {/* Product Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-1 md:gap-3 lg:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-5">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
@@ -81,4 +72,4 @@ function SimillarProducts() {
   );
 }
 
-export default SimillarProducts;
+export default Wishlist;

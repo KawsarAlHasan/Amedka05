@@ -30,7 +30,7 @@ function CategorySection() {
         <h2 className="text-3xl font-bold mb-8">Browse By Category</h2>
 
         {/* Category Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 md:gap-5">
           {categories.map((cat, idx) => (
             <Card
               key={idx}

@@ -9,6 +9,10 @@ import Signup from "../pages/authentication/Signup";
 import VerifyCode from "../pages/authentication/VerifyCode";
 import Home from "../pages/home/Home";
 import ProductDetails from "../pages/productDetails/ProductDetails";
+import Wishlist from "../pages/wishlist/Wishlist";
+import AllProducts from "../pages/allProducts/AllProducts";
+import AiChat from "../pages/aiChats/AiChat";
+import AiChatLayout from "../layouts/AiChatLayout";
 
 export const router = createBrowserRouter([
   {
@@ -44,13 +48,34 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
+        path: "/all-products",
+        element: <AllProducts />,
+      },
+      {
         path: "/product/:id",
         element: <ProductDetails />,
+      },
+      {
+        path: "/product",
+        element: <AllProducts />,
+      },
+      {
+        path: "/favourite",
+        element: <Wishlist />,
       },
     ],
   },
 
-  // https://www.figma.com/design/Ll2FAwUeq2rAMh022t616B/Websheet?node-id=79-372&t=t6EgEbLwaTlLW2nl-0
+  {
+    path: "/ai-chat",
+    element: <AiChatLayout />,
+    children: [
+      {
+        path: "/ai-chat",
+        element: <AiChat />,
+      },
+    ],
+  },
 
   {
     path: "*",

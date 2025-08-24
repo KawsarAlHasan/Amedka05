@@ -29,7 +29,7 @@ function Footer() {
               className="bg-transparent outline-none text-white px-2 py-2 w-full md:w-64"
             />
           </div>
-          <button className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-r-md font-semibold">
+          <button className="custom-primary-btn px-6 py-2 rounded-r-md font-semibold">
             SEND
           </button>
         </div>
