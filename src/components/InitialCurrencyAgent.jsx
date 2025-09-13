@@ -56,6 +56,7 @@ export default function InitialCurrencyAgent() {
 
   return (
     <Modal
+      centered
       title={false}
       open={isModalOpen}
       footer={null}
@@ -69,6 +70,8 @@ export default function InitialCurrencyAgent() {
           padding: "24px",
           maxWidth: "520px",
           margin: "0 auto",
+          // boxShadow: "0 0 20px rgba(500, 300, 0, 0.4)",
+           boxShadow: "0 0 50px rgba(128, 128, 128, 0.4)",
         },
         body: {
           color: "#ffffff",

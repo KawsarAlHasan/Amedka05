@@ -13,6 +13,7 @@ import Wishlist from "../pages/wishlist/Wishlist";
 import AllProducts from "../pages/allProducts/AllProducts";
 import AiChat from "../pages/aiChats/AiChat";
 import AiChatLayout from "../layouts/AiChatLayout";
+import DiscordCallback from "../components/authentications/DiscordCallback";
 
 export const router = createBrowserRouter([
   {
@@ -62,6 +63,10 @@ export const router = createBrowserRouter([
       {
         path: "/favourite",
         element: <Wishlist />,
+      },
+      {
+        path: "/discord/callback",
+        element: <DiscordCallback />,
       },
     ],
   },

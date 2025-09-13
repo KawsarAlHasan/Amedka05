@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal } from "antd";
-import { FcGoogle } from "react-icons/fc";
+import { Button, message, Modal } from "antd";
 import { FaDiscord, FaUserAlt } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+
+import GoogleAuth from "./authentications/GoogleAuth";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import DiscordAuth from "./authentications/DiscordAuth";
 
 export default function InitialLoginModel() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,19 +37,20 @@ export default function InitialLoginModel() {
   };
 
   return (
-    <div>
+    <div className=" ">
       <Modal
+        centered
         title={false}
         open={isModalOpen}
         footer={null}
         closable={false}
-        className="!bg-[#1f1f1f] rounded-lg"
+        className="bg-[#1f1f1f] rounded-lg"
         styles={{
           content: {
             background: "#1f1f1f",
             borderRadius: 12,
             border: "1px solid #ffffff",
-            // boxShadow: "0 0 20px rgba(255, 0, 0, 0.4)", // Shadow color
+            boxShadow: "0 0 50px rgba(128, 128, 128, 0.4)",
           },
 
           body: { color: "#1f1f1f" },
@@ -60,21 +64,13 @@ export default function InitialLoginModel() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <Button
-            color="default"
-            className="text-center w-full !py-5 !font-semibold !rounded-full"
-            onClick={handleNotNow}
-          >
-            <FcGoogle size={22} /> Sign in with Google
-          </Button>
+          {/* <GoogleAuth /> */}
 
-          <Button
-            color="default"
-            className="text-center w-full !py-5 !font-semibold !rounded-full"
-            onClick={handleNotNow}
-          >
-            <FaDiscord size={20} /> Sign in with Discord
-          </Button>
+          <GoogleOAuthProvider clientId="713219959723-ba4plbc7ameq57m7e1b9jatme3fah87o.apps.googleusercontent.com">
+            <GoogleAuth />
+          </GoogleOAuthProvider>
+
+          <DiscordAuth />
 
           <Button
             color="default"
