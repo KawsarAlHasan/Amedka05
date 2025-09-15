@@ -2,7 +2,7 @@ import React from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 
 import { API } from "../../api/api";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import { FcGoogle } from "react-icons/fc";
 
 function GoogleAuth() {
@@ -12,9 +12,15 @@ function GoogleAuth() {
         const res = await API.post("/auth/google", {
           token: tokenResponse.access_token,
         });
-        console.log("User Data:", res.data);
+
+        localStorage.setItem("token", res.data.token);
+
+        message.success("Login successful!", 1).then(() => {
+          window.location.reload();
+        });
       } catch (err) {
         console.error("Backend error:", err);
+        message.error("Login failed. Please try again.");
       }
     },
     onError: () => console.error("Login Failed"),

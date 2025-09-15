@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal } from "antd";
 import Cookies from "js-cookie";
+import { useGetAllAgents } from "../api/api";
 
 const currencies = [
   "EUR",
@@ -13,15 +14,10 @@ const currencies = [
   "CNY",
   "KRW",
 ];
-const agents = [
-  { name: "Hipobuy", displayName: "Hipobuy" },
-  { name: "CNFans", displayName: "CN fans" },
-  { name: "Kobuy", displayName: "Kako Buy" },
-  { name: "Oopbuy", displayName: "Oopbuy" },
-  { name: "CSSbuy", displayName: "CSS" },
-];
 
 export default function InitialCurrencyAgent() {
+  const { allAgents, isLoading, isError, error, refetch } = useGetAllAgents();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState(null);
   const [selectedAgent, setSelectedAgent] = useState(null);
@@ -71,7 +67,7 @@ export default function InitialCurrencyAgent() {
           maxWidth: "520px",
           margin: "0 auto",
           // boxShadow: "0 0 20px rgba(500, 300, 0, 0.4)",
-           boxShadow: "0 0 50px rgba(128, 128, 128, 0.4)",
+          boxShadow: "0 0 50px rgba(128, 128, 128, 0.4)",
         },
         body: {
           color: "#ffffff",
@@ -107,18 +103,23 @@ export default function InitialCurrencyAgent() {
         {/* Agent Selection */}
         <div>
           <h3 className="text-white text-sm font-medium mb-3">Agent</h3>
-          <div className="flex flex-col gap-2">
-            {agents.map((agent) => (
+          <div className="flex flex-col gap-2 ">
+            {allAgents.map((agent) => (
               <div
-                key={agent.name}
-                onClick={() => setSelectedAgent(agent.name)}
-                className={`p-3 rounded-md cursor-pointer transition-colors ${
-                  selectedAgent === agent.name
+                key={agent.agent_name}
+                onClick={() => setSelectedAgent(agent.agent_name)}
+                className={`p-3  border border-[#696969]  flex items-center gap-1 rounded-md cursor-pointer transition-colors ${
+                  selectedAgent === agent.agent_name
                     ? "bg-blue-500 text-white"
                     : "bg-[#2a2a2a] text-gray-300 hover:bg-[#363636]"
                 }`}
               >
-                <span className="font-medium">{agent.displayName}</span>
+                <img
+                  className="w-[50px] h-[46px] rounded"
+                  src={agent?.agent_image}
+                  alt={agent.agent_name}
+                />
+                <span className="font-medium">{agent.agent_name}</span>
               </div>
             ))}
           </div>

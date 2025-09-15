@@ -49,6 +49,9 @@ function DiscordCallback() {
         );
 
         const data = res?.data;
+
+        console.log("Discord auth response:", data);
+
         if (!data) {
           throw new Error("Empty response from server");
         }
