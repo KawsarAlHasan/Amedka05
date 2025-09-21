@@ -4,20 +4,26 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { API } from "../../api/api";
 import { Button, message } from "antd";
 import { FcGoogle } from "react-icons/fc";
+import axios from "axios";
 
 function GoogleAuth() {
   const handleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
+
+        console.log(tokenResponse, "tokenResponse");
+       
         const res = await API.post("/auth/google", {
           token: tokenResponse.access_token,
         });
 
-        localStorage.setItem("token", res.data.token);
+        console.log(res, "res");
 
-        message.success("Login successful!", 1).then(() => {
-          window.location.reload();
-        });
+        // localStorage.setItem("token", res.data.token);
+
+        // message.success("Login successful!", 1).then(() => {
+        //   window.location.reload();
+        // });
       } catch (err) {
         console.error("Backend error:", err);
         message.error("Login failed. Please try again.");

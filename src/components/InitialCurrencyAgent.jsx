@@ -28,17 +28,17 @@ export default function InitialCurrencyAgent() {
     const savedCurrency = Cookies.get("currency");
     const savedAgent = Cookies.get("agent");
 
-    console.log("token", token);
-    console.log("skipLogin", skipLogin);
-    console.log("savedCurrency", savedCurrency);
-    console.log("savedAgent", savedAgent);
+    // console.log("token", token);
+    // console.log("skipLogin", skipLogin);
+    // console.log("savedCurrency", savedCurrency);
+    // console.log("savedAgent", savedAgent);
 
     if ((token || skipLogin) && (!savedCurrency || !savedAgent)) {
       setIsModalOpen(true);
-      console.log("Modal should open");
+      // console.log("Modal should open");
     } else {
       setIsModalOpen(false);
-      console.log("Modal should NOT open");
+      // console.log("Modal should NOT open");
     }
   }, []);
 

@@ -1,12 +1,19 @@
 import loginImage from "../../assets/images/login-image.jpg";
-import { Button, Input, Typography } from "antd";
+import { Button, Input, message, Typography } from "antd";
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { API } from "../../api/api";
+import { IoArrowBackCircleOutline } from "react-icons/io5";
 
 const { Title, Text } = Typography;
 
 function SetNewPassword() {
   const router = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const userEmail = localStorage.getItem("email");
+  const otp = localStorage.getItem("otp");
+
   const {
     handleSubmit,
     control,
@@ -14,10 +21,30 @@ function SetNewPassword() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
-     router("/");
-    // Handle password reset logic here
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+
+    try {
+      const response = await API.post("/forgot-password/set-new-password", {
+        email: userEmail,
+        otp: otp,
+        password: data.password,
+      });
+
+      if (response.status === 200) {
+        localStorage.setItem("token", response.data.token);
+        message.success("Set new password successful!", 1).then(() => {
+          window.location.reload();
+        });
+        router("/");
+      }
+    } catch (error) {
+      message.error(
+        error?.response?.data?.message || "Failed to set new password."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const password = watch("password");
@@ -27,7 +54,14 @@ function SetNewPassword() {
       <div className="w-full container mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-5 shadow-2xl rounded-4xl overflow-hidden">
           {/* Image Section */}
-          <div className="hidden lg:block lg:col-span-2 h-full">
+          <div className="relative hidden lg:block lg:col-span-2 h-full">
+            {/* Desktop/Large: Back button over the image */}
+            <IoArrowBackCircleOutline
+              size={40}
+              onClick={() => router(-1)}
+              aria-label="Go back"
+              className="absolute top-4 left-4 cursor-pointer drop-shadow-lg hover:scale-105 transition text-white"
+            />
             <img
               src={loginImage}
               className="w-full h-full object-cover"
@@ -37,9 +71,19 @@ function SetNewPassword() {
           </div>
 
           {/* Form Section */}
-          <div className="lg:col-span-3 bg-white rounded-4xl lg:ml-[-30px]">
+          <div className="lg:col-span-3 bg-white rounded-4xl lg:ml-[-30px] mx-3 md:mx-0">
             <div className="flex justify-center items-center min-h-[600px] lg:min-h-[850px]">
               <div className="w-full max-w-md px-6 py-12 sm:px-10 sm:py-16 lg:px-0">
+                {/* Mobile/Tablet: Back button above the form header */}
+                <div className="lg:hidden mb-7 mt-[-60px]">
+                  <IoArrowBackCircleOutline
+                    size={40}
+                    onClick={() => router(-1)}
+                    aria-label="Go back"
+                    className="cursor-pointer hover:scale-105 transition text-gray-700"
+                  />
+                </div>
+
                 <div className="text-center mb-10">
                   <Title
                     level={2}
@@ -126,6 +170,8 @@ function SetNewPassword() {
 
                   <div className="ant-form-item !mb-6">
                     <Button
+                      loading={isSubmitting}
+                      disabled={isSubmitting}
                       type="primary"
                       htmlType="submit"
                       block

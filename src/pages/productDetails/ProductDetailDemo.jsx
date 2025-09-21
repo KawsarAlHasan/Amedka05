@@ -1,43 +1,21 @@
 import React, { useMemo, useState } from "react";
-import { Button, Radio, Tag, Tooltip, message, Divider, Image } from "antd";
+import { Button, Tag, Tooltip, message, Divider, Image } from "antd";
 import { AiOutlineHeart } from "react-icons/ai";
 import { LuShare2 } from "react-icons/lu";
 
-const DEMO_PRODUCT = {
-  id: "sku-demo-001",
-  title: "Marketside Fresh Organic Bananas, Bunch",
-  price: 0.89,
-  oldPrice: 1.99,
-  sizes: ["M", "L", "XL"],
-  colors: [
-    { name: "Grey", value: "grey" },
-    { name: "Red", value: "red" },
-    { name: "White", value: "white" },
-  ],
-  // Demo gallery (jacket images to match screenshot vibe)
-  images: [
-    "https://pngimg.com/d/porsche_PNG10622.png",
-    "https://www.pngplay.com/wp-content/uploads/8/Red-Sports-Car-Transparent-PNG.png",
-    "https://pngimg.com/d/porsche_PNG10622.png",
-    "https://www.pngplay.com/wp-content/uploads/8/Red-Sports-Car-Transparent-PNG.png",
-    "https://pngimg.com/d/porsche_PNG10622.png",
-  ],
-  cta: {
-    label: "Buy on Hippobuy",
-    href: "#",
-  },
-};
-
-export default function ProductDetailDemo() {
+export default function ProductDetailDemo({ product }) {
   const [selectedImage, setSelectedImage] = useState(0);
-  const [size, setSize] = useState(DEMO_PRODUCT.sizes[0]);
-  const [color, setColor] = useState(DEMO_PRODUCT.colors[0].value);
+  const [size, setSize] = useState(product?.sizes?.[0]);
+  const [color, setColor] = useState(product?.colors?.[0]);
   const [wishlisted, setWishlisted] = useState(false);
 
-  const formattedPrice = useMemo(() => `$${DEMO_PRODUCT.price.toFixed(2)}`, []);
+  const formattedPrice = useMemo(
+    () => `$${product?.offer_price?.toFixed(2)}`,
+    [product?.offer_price]
+  );
   const formattedOldPrice = useMemo(
-    () => `$${DEMO_PRODUCT.oldPrice.toFixed(2)}`,
-    []
+    () => `$${product?.price?.toFixed(2)}`,
+    [product?.price]
   );
 
   const onWishlist = () => {
@@ -60,64 +38,67 @@ export default function ProductDetailDemo() {
 
   return (
     <div className="">
-      <div className="   ">
-        {/* Grid: Gallery + Details */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <div className="h-[80vh] flex flex-col justify-between">
-            {/* Main Image */}
-            <div className="flex-1 border-2 border-gray-400 rounded-2xl overflow-hidden flex items-center justify-center">
-              <Image
-                src={DEMO_PRODUCT.images[selectedImage]}
-                alt={DEMO_PRODUCT.title}
-                // preview={false}
-                className="object-contain w-full h-full"
-              />
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Gallery */}
+        <div className="h-[80vh] flex flex-col justify-between">
+          {/* Main Image */}
+          <div className="flex-1 border-2 border-gray-400 rounded-2xl overflow-hidden flex items-center justify-center">
+            {/* <img
+              src={product?.images?.[selectedImage]}
+              alt={product?.product_name}
+              className="!object-contain w-full h-full"
+            /> */}
+            <Image
+              src={product?.images?.[selectedImage]}
+              alt={product?.product_name}
+            />
+          </div>
 
-            {/* Thumbnails */}
-            <div className="mt-4 grid grid-cols-5 gap-4">
-              {DEMO_PRODUCT.images.map((src, idx) => (
-                <button
-                  key={src}
-                  onClick={() => setSelectedImage(idx)}
-                  className={`cursor-pointer relative rounded-xl overflow-hidden aspect-square border transition-all ${
-                    selectedImage === idx
-                      ? "border-blue-500 ring-2 ring-blue-500"
-                      : "border-neutral-500 hover:border-gray-400"
-                  }`}
-                >
-                  <img
-                    src={src}
-                    alt={`thumb-${idx}`}
-                    className="object-cover w-full h-full rounded-xl"
-                  />
-                </button>
-              ))}
+          {/* Thumbnails */}
+          <div className="mt-4 grid grid-cols-5 gap-4">
+            {product?.images?.map((src, idx) => (
+              <button
+                key={src}
+                onClick={() => setSelectedImage(idx)}
+                className={`cursor-pointer relative rounded-xl overflow-hidden aspect-square border transition-all ${
+                  selectedImage === idx
+                    ? "border-blue-500 ring-2 ring-blue-500"
+                    : "border-neutral-500 hover:border-gray-400"
+                }`}
+              >
+                <img
+                  src={src}
+                  alt={`thumb-${idx}`}
+                  className="object-cover w-full h-full rounded-xl"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Details */}
+        <div className="flex flex-col">
+          <h1 className="text-3xl md:text-5xl font-semibold leading-tight">
+            {product?.product_name}
+          </h1>
+
+          <Divider className="bg-gray-400 !my-[-10px]" />
+
+          <div className="my-6 flex items-end gap-4">
+            <div className="text-4xl font-bold text-blue-400">
+              {formattedPrice}
+            </div>
+            <div className="text-lg line-through text-neutral-400">
+              {formattedOldPrice}
             </div>
           </div>
 
-          {/* Details */}
-          <div className="flex flex-col">
-            <h1 className="text-3xl md:text-5xl font-semibold leading-tight">
-              {DEMO_PRODUCT.title}
-            </h1>
-
-            <Divider className="bg-gray-400 !my-[-10px]" />
-
-            <div className="my-6 flex items-end gap-4">
-              <div className="text-4xl font-bold text-blue-400">
-                {formattedPrice}
-              </div>
-              <div className="text-lg line-through text-neutral-400">
-                {formattedOldPrice}
-              </div>
-            </div>
-
-            {/* Size */}
+          {/* Size */}
+          {product?.sizes?.length > 0 && (
             <div className="mb-6">
               <div className="text-sm text-neutral-400 mb-2">Size</div>
               <div className="flex gap-3">
-                {DEMO_PRODUCT.sizes.map((s, index) => (
+                {product.sizes.map((s, index) => (
                   <Tag.CheckableTag
                     key={index}
                     checked={size === s}
@@ -133,79 +114,78 @@ export default function ProductDetailDemo() {
                 ))}
               </div>
             </div>
+          )}
 
-            {/* Color */}
+          {/* Color */}
+          {product?.colors?.length > 0 && (
             <div className="mb-8">
               <div className="text-sm text-neutral-400 mb-2">Color</div>
               <div className="flex gap-3">
-                {DEMO_PRODUCT.colors.map((c) => (
+                {product.colors.map((c) => (
                   <Tag.CheckableTag
-                    key={c.value}
-                    checked={color === c.value}
-                    onChange={() => setColor(c.value)}
+                    key={c}
+                    checked={color === c}
+                    onChange={() => setColor(c)}
                     className={`!px-5 !py-2 rounded-xl border ${
-                      color === c.value
+                      color === c
                         ? "!bg-transparent !text-white !border-blue-500"
                         : "!bg-transparent !text-neutral-300 !border-neutral-400 !hover:border-neutral-300"
                     }`}
                   >
-                    {c.name}
+                    {c}
                   </Tag.CheckableTag>
                 ))}
               </div>
             </div>
+          )}
 
-            {/* CTA */}
-            <div className="w-full">
+          {/* CTA */}
+          <div className="w-full">
+            <Button
+              type="primary"
+              size="large"
+              className="!w-full !h-12 !rounded-xl custom-primary-btn"
+              href={product?.affiate_link}
+              target="_blank"
+            >
+              Buy on {product?.agent?.agent_name}
+            </Button>
+          </div>
+
+          {/* Actions */}
+          <div className="mt-5 flex items-center gap-4">
+            <Tooltip
+              title={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            >
               <Button
-                type="primary"
-                size="large"
-                className="!w-full !h-12 !rounded-xl custom-primary-btn"
-                onClick={() =>
-                  message.success("Redirecting to Hippobuy… (demo)")
-                }
+                icon={<AiOutlineHeart size={18} />}
+                onClick={onWishlist}
+                className={`!rounded-xl !h-10 !px-3 border-neutral-700 ${
+                  wishlisted ? "!border-blue-500" : "hover:!border-neutral-500"
+                }`}
               >
-                {DEMO_PRODUCT.cta.label}
+                <span className="ml-2">Add to wishlist</span>
               </Button>
-            </div>
+            </Tooltip>
 
-            {/* Actions */}
-            <div className="mt-5 flex items-center gap-4">
-              <Tooltip
-                title={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            <Tooltip title="Share this product">
+              <Button
+                icon={<LuShare2 size={18} />}
+                onClick={onShare}
+                className="!rounded-xl !h-10 !px-3 border-neutral-700 hover:!border-neutral-500"
               >
-                <Button
-                  icon={<AiOutlineHeart size={18} />}
-                  onClick={onWishlist}
-                  className={`!rounded-xl !h-10 !px-3 border-neutral-700 ${
-                    wishlisted
-                      ? "!border-blue-500"
-                      : "hover:!border-neutral-500"
-                  }`}
-                >
-                  <span className="ml-2">Add to wishlist</span>
-                </Button>
-              </Tooltip>
+                <span className="ml-2">Share this product</span>
+              </Button>
+            </Tooltip>
+          </div>
 
-              <Tooltip title="Share this product">
-                <Button
-                  icon={<LuShare2 size={18} />}
-                  onClick={onShare}
-                  className="!rounded-xl !h-10 !px-3 border-neutral-700 hover:!border-neutral-500"
-                >
-                  <span className="ml-2">Share this product</span>
-                </Button>
-              </Tooltip>
+          {/* Meta */}
+          <div className="mt-8 text-sm text-neutral-400 space-y-1">
+            <div>
+              Selected: <span className="text-white font-medium">{size}</span> /
+              <span className="text-white font-medium"> {color}</span>
             </div>
-
-            {/* Meta */}
-            <div className="mt-8 text-sm text-neutral-400 space-y-1">
-              <div>
-                Selected: <span className="text-white font-medium">{size}</span>{" "}
-                /<span className="text-white font-medium"> {color}</span>
-              </div>
-              <div>SKU: {DEMO_PRODUCT.id}</div>
-            </div>
+            <div>SKU: {product?.id}</div>
           </div>
         </div>
       </div>

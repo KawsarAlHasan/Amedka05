@@ -1,19 +1,15 @@
 @import "tailwindcss";
 
-
-
 .custom-primary-btn {
-  background-color: #0077B6 !important;
+  background-color: #0077b6 !important;
   color: #ffffff !important;
 }
 
 .custom-primary-btn:hover,
 .custom-primary-btn:focus {
-  background-color: #005580 !important; 
+  background-color: #005580 !important;
   border-color: #005580 !important;
 }
-
-
 
 .custom-tabs .ant-tabs-tab-btn {
   color: white !important;
@@ -22,34 +18,25 @@
   background-color: #3b82f6 !important;
 }
 
-
 .scrollbar-hide::-webkit-scrollbar {
-  display: none; 
+  display: none;
 }
 
 .scrollbar-hide {
-  -ms-overflow-style: none; 
-  scrollbar-width: none;   
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .custom-input::placeholder {
   color: #f87171 !important;
-  opacity: 1; 
+  opacity: 1;
 }
-
 
 .ant-input::placeholder {
   color: #bfc4cc !important; /* gray-400 */
 }
 
-
-
-
-
-
-
 /* npm uninstall react react-dom */
 /* npm install react@18 react-dom@18 */
 /* rm -rf node_modules package-lock.json
 npm install */
-
