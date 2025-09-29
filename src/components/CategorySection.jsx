@@ -6,9 +6,12 @@ import IsLoading from "./IsLoading";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useNavigate } from "react-router-dom";
 
 function CategorySection() {
   const { allCategories, isLoading } = useGetAllCategories();
+
+  const navigate = useNavigate();
 
   const settings = {
     dots: true,
@@ -80,6 +83,9 @@ function CategorySection() {
                   height: 140,
                 }}
                 bodyStyle={{ padding: "20px" }}
+                onClick={() => {
+                  navigate(`/all-products?category=${cat.category_name}`);
+                }}
               >
                 <div className="flex justify-center">
                   <img

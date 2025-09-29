@@ -1,9 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useGetProductDetails } from "../../api/api";
-import fimage from "../../assets/Frame 125.png";
 import SimillarProducts from "../../components/SimillarProducts";
 import Details from "./Details";
-import ProductDetailDemo from "./ProductDetailDemo";
+import ProductView from "./ProductView";
 import IsLoading from "../../components/IsLoading";
 import IsError from "../../components/IsError";
 
@@ -24,7 +23,7 @@ function ProductDetails() {
   return (
     <div>
       <div className="my-6">
-        <ProductDetailDemo product={productDetails} />
+        <ProductView product={productDetails} />
       </div>
 
       <div className="my-5">
@@ -32,7 +31,7 @@ function ProductDetails() {
       </div>
 
       <div className="my-6">
-        <SimillarProducts />
+        <SimillarProducts category={productDetails?.category} />
       </div>
     </div>
   );

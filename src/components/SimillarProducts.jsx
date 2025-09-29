@@ -1,61 +1,34 @@
-import React from "react";
-import { AiOutlineHeart } from "react-icons/ai";
-import productImage from "../assets/images/car.png";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
+import { useGetAllProducts } from "../api/api";
+import IsLoading from "./IsLoading";
+import IsError from "./IsError";
 
-const products = [
-  {
-    id: 1,
-    name: "Kvidio Headphone 512",
-    image: productImage,
-    price: 28.85,
-    oldPrice: 32.8,
-    isHot: true,
-  },
-  {
-    id: 2,
-    name: "Kvidio Headphone 512",
-    image: productImage,
-    price: 28.85,
-    oldPrice: 32.8,
-    isHot: true,
-  },
-  {
-    id: 3,
-    name: "Kvidio Headphone 512",
-    image: productImage,
-    price: 28.85,
-    oldPrice: 32.8,
-    isHot: true,
-  },
-  {
-    id: 4,
-    name: "Kvidio Headphone 512",
-    image: productImage,
-    price: 28.85,
-    oldPrice: 32.8,
-    isHot: true,
-  },
-  {
-    id: 5,
-    name: "Kvidio Headphone 512",
-    image: productImage,
-    price: 28.85,
-    oldPrice: 32.8,
-    isHot: true,
-  },
-  {
-    id: 6,
-    name: "Kvidio Headphone 512",
-    image: productImage,
-    price: 28.85,
-    oldPrice: 32.8,
-    isHot: true,
-  },
-];
+function SimillarProducts({ category }) {
+  const { allProducts, isLoading, isError, error, refetch } = useGetAllProducts(
+    {
+      page: 1,
+      limit: 6,
+      status: "Active",
+      product_name: "",
+      min_price: 0,
+      max_price: 0,
+      category: category?.category_name,
+      size: "",
+      color: "",
+      sort_by: "created_at",
+      sort_order: "desc",
+    }
+  );
 
-function SimillarProducts() {
+  if (isLoading) {
+    return <IsLoading />;
+  }
+
+  if (isError) {
+    return <IsError error={error} refetch={refetch} />;
+  }
+  
   return (
     <div>
       <div className=" py-10">
@@ -65,14 +38,17 @@ function SimillarProducts() {
             <p className="text-blue-400 font-semibold mb-1">Featured Product</p>
             <h2 className="text-3xl font-bold">Simillar Products</h2>
           </div>
-          <button className="custom-primary-btn px-6 py-2 rounded-md font-medium transition">
+          <Link
+            to={`/all-products?category=${category?.category_name}`}
+            className="custom-primary-btn px-6 py-2 rounded-md font-medium transition"
+          >
             View All
-          </button>
+          </Link>
         </div>
 
         {/* Product Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-1 md:gap-3 lg:gap-5">
-          {products.map((product) => (
+          {allProducts?.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

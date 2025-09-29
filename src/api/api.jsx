@@ -91,6 +91,102 @@ export const useGetAllCategories = () => {
   return { allCategories, isLoading, isError, error, refetch };
 };
 
+// Get all Wishlist
+export const useGetAllWishlist = () => {
+  const getData = async () => {
+    const response = await API.get("/wishlist/all");
+    return response.data;
+  };
+
+  const {
+    data: response = {},
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["allWishlist"],
+    queryFn: getData,
+    keepPreviousData: true,
+  });
+
+  const { data: allWishlist = [] } = response;
+
+  return { allWishlist, isLoading, isError, error, refetch };
+};
+
+// Get all Wishlist ids
+export const useGetAllWishIds = () => {
+  const getData = async () => {
+    const response = await API.get("/wishlist/id");
+    return response.data;
+  };
+
+  const {
+    data: response = {},
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["allWishlistId"],
+    queryFn: getData,
+    keepPreviousData: true,
+  });
+
+  const { data: allWishlistId = [] } = response;
+
+  return { allWishlistId, isLoading, isError, error, refetch };
+};
+
+// Get random product
+export const useGetRandomProduct = () => {
+  const getData = async () => {
+    const response = await API.get("/product/random");
+    return response.data;
+  };
+
+  const {
+    data: response = {},
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["randomProduct"],
+    queryFn: getData,
+    keepPreviousData: true,
+  });
+
+  const { data: randomProduct = [] } = response;
+
+  return { randomProduct, isLoading, isError, error, refetch };
+};
+
+// Get single random product
+export const useGetSingleRandomProduct = () => {
+  const getData = async () => {
+    const response = await API.get("/product/single-random");
+    return response.data;
+  };
+
+  const {
+    data: response = {},
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["randomSingleProduct"],
+    queryFn: getData,
+    keepPreviousData: true,
+  });
+
+  const { data: randomSingleProduct = [] } = response;
+
+  return { randomSingleProduct, isLoading, isError, error, refetch };
+};
+
 // get single product details
 export const useGetProductDetails = (productId) => {
   const getData = async () => {
@@ -115,131 +211,31 @@ export const useGetProductDetails = (productId) => {
   return { productDetails, isLoading, isError, error, refetch };
 };
 
-//  page = 1,
-//       limit = 10,
-//       status,
-//       product_name,
-//       min_price,
-//       max_price,
-//       size,
-//       color,
-//       sort_by = 'created_at',
-//       sort_order = 'desc'
-
-// get all products with pagination
-// export const useGetAllProducts = ({
-//   page = 1,
-//   limit = 10,
-//   status = "Active",
-//   product_name,
-//   min_price,
-//   max_price,
-//   size,
-//   color,
-//   sort_by = "created_at",
-//   sort_order = "desc",
-// } = {}) => {
-//   const getData = async () => {
-
-// console.log({
-//       page,
-//       limit,
-//       status,
-//       product_name,
-//       min_price,
-//       max_price,
-//       size,
-//       color,
-//       sort_by,
-//       sort_order,
-//     });
-
-//     const response = await API.get("/product/all", {
-//       params: {
-//         page,
-//         limit,
-//         status,
-//         product_name,
-//         min_price,
-//         max_price,
-//         size,
-//         color,
-//         sort_by,
-//         sort_order,
-//       },
-//     });
-//     return response.data;
-//   };
-
-//   const {
-//     data: response = {},
-//     isLoading,
-//     isError,
-//     error,
-//     refetch,
-//   } = useQuery({
-//     queryKey: [
-//       "allProducts",
-//       {
-//         page,
-//         limit,
-//         status,
-//         product_name,
-//         min_price,
-//         max_price,
-//         size,
-//         color,
-//         sort_by,
-//         sort_order,
-//       },
-//     ],
-//     queryFn: getData,
-//     keepPreviousData: true,
-//   });
-
-//   const { data: allProducts = [], pagination = {} } = response;
-
-//   return { allProducts, pagination, isLoading, isError, error, refetch };
-// };
-
-
-
 export const useGetAllProducts = ({
   page = 1,
   limit = 10,
+  product_name,
   // status = "Active",
-  // product_name,
   // min_price,
   // max_price,
   // size,
-  // color,
+  color,
+  category,
   sort_by = "created_at",
   sort_order = "desc",
 }) => {
   const getData = async () => {
-    console.log({
-      page,
-      limit,
-      status,
-      // product_name,
-      // min_price,
-      // max_price,
-      // size,
-      // color,
-      sort_by,
-      sort_order,
-    });
-
     const response = await API.get("/product/all", {
       params: {
         page,
         limit,
         // status,
-        // product_name,
+        product_name,
         // min_price,
         // max_price,
         // size,
-        // color,
+        color,
+        category,
         sort_by,
         sort_order,
       },
@@ -260,11 +256,12 @@ export const useGetAllProducts = ({
         page,
         limit,
         // status,
-        // product_name,
+        product_name,
         // min_price,
         // max_price,
         // size,
-        // color,
+        color,
+        category,
         sort_by,
         sort_order,
       },

@@ -1,155 +1,33 @@
-import productImage from "../../assets/images/car.png";
-
-const products = [
-  {
-    id: 1,
-    name: "Wireless Earbuds X1",
-    image: productImage,
-    price: 19.99,
-    oldPrice: 25.99,
-    isHot: true,
-  },
-  {
-    id: 2,
-    name: "Gaming Mouse Pro",
-    image: productImage,
-    price: 35.5,
-    oldPrice: 42.0,
-    isHot: false,
-  },
-  {
-    id: 3,
-    name: "Bluetooth Speaker S2",
-    image: productImage,
-    price: 49.99,
-    oldPrice: 59.99,
-    isHot: true,
-  },
-  {
-    id: 4,
-    name: "Mechanical Keyboard K7",
-    image: productImage,
-    price: 75.0,
-    oldPrice: 89.0,
-    isHot: false,
-  },
-  {
-    id: 5,
-    name: "Smartwatch Vibe",
-    image: productImage,
-    price: 120.0,
-    oldPrice: 150.0,
-    isHot: true,
-  },
-  {
-    id: 11,
-    name: "USB-C Hub 7-in-1",
-    image: productImage,
-    price: 29.99,
-    oldPrice: 39.99,
-    isHot: false,
-  },
-  {
-    id: 12,
-    name: "4K Action Camera",
-    image: productImage,
-    price: 180.0,
-    oldPrice: 220.0,
-    isHot: true,
-  },
-  {
-    id: 13,
-    name: "Wireless Charger Pad",
-    image: productImage,
-    price: 15.5,
-    oldPrice: 20.0,
-    isHot: false,
-  },
-  {
-    id: 14,
-    name: "Noise Cancelling Headset",
-    image: productImage,
-    price: 89.99,
-    oldPrice: 110.0,
-    isHot: true,
-  },
-  {
-    id: 15,
-    name: "Portable SSD 1TB",
-    image: productImage,
-    price: 130.0,
-    oldPrice: 160.0,
-    isHot: false,
-  },
-  {
-    id: 21,
-    name: "Drone Mini X5",
-    image: productImage,
-    price: 220.0,
-    oldPrice: 260.0,
-    isHot: true,
-  },
-  {
-    id: 22,
-    name: "VR Headset Z3",
-    image: productImage,
-    price: 300.0,
-    oldPrice: 350.0,
-    isHot: true,
-  },
-  {
-    id: 23,
-    name: "Smart Home Camera",
-    image: productImage,
-    price: 55.0,
-    oldPrice: 70.0,
-    isHot: false,
-  },
-  {
-    id: 24,
-    name: "Fitness Band 4",
-    image: productImage,
-    price: 45.0,
-    oldPrice: 60.0,
-    isHot: true,
-  },
-  {
-    id: 25,
-    name: "Laptop Stand Adjustable",
-    image: productImage,
-    price: 25.0,
-    oldPrice: 35.0,
-    isHot: false,
-  },
-];
-
 import React, { useState, useEffect, useRef } from "react";
 import { FiSearch, FiSend } from "react-icons/fi";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { Input, Button } from "antd";
 import ProductCard from "../../components/ProductCard";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+import ReactMarkdown from "react-markdown";
 
 function AiChat() {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+  const [sessionId, setSessionId] = useState("");
 
   // Initial bot message
   useEffect(() => {
     setMessages([
       {
         id: 1,
-        text: "Show me winter jackets under $50.",
-        sender: "user",
-      },
-      {
-        id: 2,
-        text: "Here are some winter jackets under $50 from your selected agent, Hipobuy. Would you like to filter by color or brand?",
+        text: "Hello! I'm your AI shopping assistant. How can I help you find products today?",
         sender: "bot",
-        products: products.slice(0, 5),
       },
     ]);
+  }, []);
+
+  useEffect(() => {
+    const newSession = uuidv4();
+    setSessionId(newSession);
   }, []);
 
   // Scroll to bottom when messages change
@@ -161,7 +39,26 @@ function AiChat() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleSendMessage = () => {
+  const fetchProductsByIds = async (productIds) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/product/ai-search",
+        {
+          ids: productIds,
+        }
+      );
+
+      if (response.data.success) {
+        return response.data.data;
+      }
+      return [];
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      return [];
+    }
+  };
+
+  const handleSendMessage = async () => {
     if (inputValue.trim() === "") return;
 
     // Add user message
@@ -175,54 +72,50 @@ function AiChat() {
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate bot response after a delay
-    setTimeout(() => {
-      let botResponse = {};
+    try {
+      // Send message to AI API
+      const aiResponse = await axios.post(
+        "http://10.10.7.75:8005/api/v1/chat",
+        {
+          thread_id: sessionId,
+          user_input: inputValue,
+        }
+      );
 
+      let products = [];
+
+      // If AI response contains product IDs, fetch product details
       if (
-        inputValue.toLowerCase().includes("filter") ||
-        inputValue.toLowerCase().includes("color") ||
-        inputValue.toLowerCase().includes("brand")
+        aiResponse.data.data.products &&
+        aiResponse.data.data.products.length > 0
       ) {
-        botResponse = {
-          id: messages.length + 2,
-          text: "Sure! Please select your preferred filters below.",
-          sender: "bot",
-          showFilters: true,
-        };
-      } else if (
-        inputValue.toLowerCase().includes("price") ||
-        inputValue.toLowerCase().includes("expensive")
-      ) {
-        botResponse = {
-          id: messages.length + 2,
-          text: "Finding similar jackets in high price...",
-          sender: "bot",
-          showAnalyzing: true,
-        };
+        products = await fetchProductsByIds(aiResponse.data.data.products);
+      }
 
-        // After another delay, show high-priced products
-        setTimeout(() => {
-          const expensiveProducts = products.filter((p) => p.price > 100);
-          const expensiveMessage = {
-            id: messages.length + 3,
-            text: "Here are some premium options:",
-            sender: "bot",
-            products: expensiveProducts.slice(0, 4),
-          };
-          setMessages((prev) => [...prev, expensiveMessage]);
-        }, 2000);
-      } else {
-        botResponse = {
-          id: messages.length + 2,
-          text: "I can help you find products based on your preferences. You can ask me to filter by color or brand, or find higher-priced alternatives.",
-          sender: "bot",
-        };
+      // Create bot response
+      const botResponse = {
+        id: messages.length + 2,
+        text: aiResponse.data.data.message,
+        sender: "bot",
+      };
+
+      // Add products to response if available
+      if (products.length > 0) {
+        botResponse.products = products;
       }
 
       setMessages((prev) => [...prev, botResponse]);
+    } catch (error) {
+      // Error response
+      const errorMessage = {
+        id: messages.length + 2,
+        text: "Sorry, I'm having trouble connecting right now. Please try again later.",
+        sender: "bot",
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -243,18 +136,9 @@ function AiChat() {
                     <BsLightningChargeFill className="text-blue-600" />
                   </div>
                   <div className="bg-[#1f1f1f] p-4 rounded-lg shadow-sm max-w-3xl">
-                    <p className="">{message.text}</p>
-
-                    {message.showAnalyzing && (
-                      <div className="mt-4 p-4 bg-[#1f1f1f] rounded-lg flex items-center">
-                        <div className="animate-pulse bg-blue-600 w-4 h-4 rounded-full mr-2"></div>
-                        <div className="animate-pulse bg-blue-600 w-4 h-4 rounded-full mr-2"></div>
-                        <div className="animate-pulse bg-blue-600 w-4 h-4 rounded-full mr-2"></div>
-                        <span className="text-gray-600 ml-2">
-                          Analyzing your photo...
-                        </span>
-                      </div>
-                    )}
+                    <p className="">
+                      <ReactMarkdown>{message.text}</ReactMarkdown>
+                    </p>
 
                     {message.products && (
                       <div className="mt-4">
@@ -269,7 +153,16 @@ function AiChat() {
                                 .map((product) => (
                                   <ProductCard
                                     key={product.id}
-                                    product={product}
+                                    product={{
+                                      id: product.id,
+                                      name: product.product_name,
+                                      image: product.images?.[0] || "",
+                                      price:
+                                        product.offer_price || product.price,
+                                      oldPrice: product.price,
+                                      isHot: false,
+                                    }}
+                                    isTargetBlank={true}
                                   />
                                 ))}
                             </div>

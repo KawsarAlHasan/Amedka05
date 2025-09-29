@@ -1,40 +1,66 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Button, Tag, Tooltip, message, Divider, Image } from "antd";
-import { AiOutlineHeart } from "react-icons/ai";
-import { LuShare2 } from "react-icons/lu";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import Cookies from "js-cookie";
+import { API, useGetAllWishIds } from "../../api/api";
 
-export default function ProductDetailDemo({ product }) {
+export default function ProductView({ product }) {
+  const { allWishlistId, refetch } = useGetAllWishIds();
   const [selectedImage, setSelectedImage] = useState(0);
   const [size, setSize] = useState(product?.sizes?.[0]);
   const [color, setColor] = useState(product?.colors?.[0]);
-  const [wishlisted, setWishlisted] = useState(false);
+  const [loadingStates, setLoadingStates] = useState({});
+  const savedCurrency = Cookies.get("currency");
 
-  const formattedPrice = useMemo(
-    () => `$${product?.offer_price?.toFixed(2)}`,
-    [product?.offer_price]
-  );
-  const formattedOldPrice = useMemo(
-    () => `$${product?.price?.toFixed(2)}`,
-    [product?.price]
-  );
+  // Wishlist status check
+  const isInWishlist = useMemo(() => {
+    return allWishlistId?.some((item) => item.productId === product?.id);
+  }, [allWishlistId, product?.id]);
 
-  const onWishlist = () => {
-    setWishlisted((w) => !w);
-    message.success(wishlisted ? "Removed from wishlist" : "Added to wishlist");
-  };
+  // Sync wishlisted state with actual wishlist data
+  useEffect(() => {
+    // This ensures our local state is always in sync with the server data
+  }, [isInWishlist]);
 
-  const onShare = async () => {
-    const url =
-      typeof window !== "undefined"
-        ? window.location.href
-        : "https://example.com";
+  const handleHeartClick = async (productId) => {
+    if (!productId) return;
+
+    setLoadingStates((prev) => ({ ...prev, [productId]: true }));
+
     try {
-      await navigator.clipboard.writeText(url);
-      message.success("Product link copied!");
-    } catch (e) {
-      message.info("Share this URL: " + url);
+      const res = await API.post("/wishlist/toggle", { productId: productId });
+
+      if (res.data.action === "added") {
+        message.success("Product added to wishlist!");
+      } else {
+        message.success("Product removed from wishlist!");
+      }
+
+      // Refetch wishlist data to sync with server
+      await refetch();
+    } catch (error) {
+      console.error("Wishlist error:", error);
+      message.error(
+        error?.response?.data?.message || "Failed to update wishlist."
+      );
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [productId]: false }));
     }
   };
+
+  // currencies logo use function
+  const getCurrencyIcon = (currency) => {
+    const icons = {
+      EUR: "€",
+      USD: "$",
+      AUD: "A$",
+      CAD: "C$",
+      YUAN: "¥",
+    };
+    return icons[currency] || "$";
+  };
+
+  const isProductLoading = loadingStates[product?.id] || false;
 
   return (
     <div className="">
@@ -43,11 +69,6 @@ export default function ProductDetailDemo({ product }) {
         <div className="h-[80vh] flex flex-col justify-between">
           {/* Main Image */}
           <div className="flex-1 border-2 border-gray-400 rounded-2xl overflow-hidden flex items-center justify-center">
-            {/* <img
-              src={product?.images?.[selectedImage]}
-              alt={product?.product_name}
-              className="!object-contain w-full h-full"
-            /> */}
             <Image
               src={product?.images?.[selectedImage]}
               alt={product?.product_name}
@@ -86,10 +107,12 @@ export default function ProductDetailDemo({ product }) {
 
           <div className="my-6 flex items-end gap-4">
             <div className="text-4xl font-bold text-blue-400">
-              {formattedPrice}
+              {getCurrencyIcon(savedCurrency)}
+              {product?.offer_price?.toFixed(2)}
             </div>
             <div className="text-lg line-through text-neutral-400">
-              {formattedOldPrice}
+              {getCurrencyIcon(savedCurrency)}
+              {product?.price?.toFixed(2)}
             </div>
           </div>
 
@@ -155,26 +178,29 @@ export default function ProductDetailDemo({ product }) {
           {/* Actions */}
           <div className="mt-5 flex items-center gap-4">
             <Tooltip
-              title={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              title={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
             >
               <Button
-                icon={<AiOutlineHeart size={18} />}
-                onClick={onWishlist}
-                className={`!rounded-xl !h-10 !px-3 border-neutral-700 ${
-                  wishlisted ? "!border-blue-500" : "hover:!border-neutral-500"
-                }`}
+                icon={
+                  isInWishlist ? (
+                    <AiFillHeart size={18} className="!text-red-500" />
+                  ) : (
+                    <AiOutlineHeart size={18} />
+                  )
+                }
+                onClick={() => handleHeartClick(product?.id)}
+                // disabled={isProductLoading}
+                loading={isProductLoading}
+                className={`!rounded-xl !h-10 !px-3 border ${
+                  isInWishlist
+                    ? "!border-red-500 hover:!border-red-400"
+                    : "!border-neutral-700 hover:!border-neutral-500"
+                }
+                `}
               >
-                <span className="ml-2">Add to wishlist</span>
-              </Button>
-            </Tooltip>
-
-            <Tooltip title="Share this product">
-              <Button
-                icon={<LuShare2 size={18} />}
-                onClick={onShare}
-                className="!rounded-xl !h-10 !px-3 border-neutral-700 hover:!border-neutral-500"
-              >
-                <span className="ml-2">Share this product</span>
+                <span className="ml-2">
+                  {isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+                </span>
               </Button>
             </Tooltip>
           </div>

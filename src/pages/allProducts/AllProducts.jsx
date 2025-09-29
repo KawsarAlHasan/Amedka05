@@ -1,30 +1,38 @@
 import React, { useState } from "react";
-import productImage from "../../assets/images/car.png";
 import ProductCard from "../../components/ProductCard";
 import { useGetAllProducts } from "../../api/api";
+import IsLoading from "../../components/IsLoading";
+import IsError from "../../components/IsError";
+import { useLocation } from "react-router-dom";
 
 function AllProducts() {
   const [filter, setFilter] = useState("all");
+
+  // get query params from url
+  const { search } = useLocation();
+  const queryParams = new URLSearchParams(search);
+  const product_name = queryParams.get("product_name") || "";
+  const category = queryParams.get("category") || "";
+  const color = queryParams.get("color") || "";
+  const size = queryParams.get("size") || "";
 
   const { allProducts, pagination, isLoading, isError, error, refetch } =
     useGetAllProducts({
       page: 1,
       limit: 10,
       status: "Active",
-      product_name: "",
+      product_name: product_name,
       min_price: 0,
       max_price: 0,
-      size: "",
-      color: "",
+      category: category,
+      size: size,
+      color: color,
       sort_by: "created_at",
       sort_order: "desc",
     });
 
-    console.log("allProducts:", allProducts);
-
   const filteredProducts = allProducts.filter((product) => {
     if (filter === "all") return true;
-    if (filter === "hot") return product.isHot;
     return true;
   });
 
@@ -35,6 +43,14 @@ function AllProducts() {
     sortedProducts.sort((a, b) => b.price - a.price);
   }
 
+  if (isLoading) {
+    return <IsLoading />;
+  }
+
+  if (isError) {
+    return <IsError error={error} refetch={refetch} />;
+  }
+
   return (
     <div>
       <div className="py-10">
@@ -43,10 +59,9 @@ function AllProducts() {
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="border px-3 py-2 rounded-lg bg-[#3a3a3a] text-[#FFFFFF]"
+            className="border !px-3 py-2 rounded-lg bg-[#3a3a3a] text-[#FFFFFF]"
           >
             <option value="all">All Products</option>
-            <option value="hot">Hot Deals</option>
             <option value="lowToHigh">Price: Low to High</option>
             <option value="highToLow">Price: High to Low</option>
           </select>
@@ -57,6 +72,12 @@ function AllProducts() {
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+
+        {sortedProducts.length === 0 && (
+          <div className="text-center text-gray-500 mt-10">
+            No products found.
+          </div>
+        )}
       </div>
     </div>
   );

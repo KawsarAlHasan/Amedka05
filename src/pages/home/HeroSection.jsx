@@ -1,5 +1,6 @@
 import React from "react";
 import { FiArrowUpRight } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 function HeroSection() {
   return (
@@ -16,10 +17,10 @@ function HeroSection() {
       </p>
 
       {/* Button */}
-      <button className="inline-flex items-center gap-2 bg-transparent border border-white px-5 py-2 rounded transition">
+      <Link to="/all-products" className="inline-flex items-center gap-2 bg-transparent border border-white px-5 py-2 rounded transition">
         Explore Now
         <FiArrowUpRight size={18} />
-      </button>
+      </Link>
     </section>
   );
 }

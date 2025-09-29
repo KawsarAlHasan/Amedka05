@@ -1,70 +1,32 @@
-import React from "react";
-import { AiOutlineHeart } from "react-icons/ai";
-import productImage from "../../assets/images/car.png";
-import { Link } from "react-router-dom";
 import ProductCard from "../../components/ProductCard";
-
-const products = [
-  {
-    id: 1,
-    name: "Kvidio Headphone 512",
-    image: productImage,
-    price: 28.85,
-    oldPrice: 32.8,
-    isHot: true,
-  },
-  {
-    id: 2,
-    name: "Kvidio Headphone 512",
-    image: productImage,
-    price: 28.85,
-    oldPrice: 32.8,
-    isHot: true,
-  },
-  {
-    id: 3,
-    name: "Kvidio Headphone 512",
-    image: productImage,
-    price: 28.85,
-    oldPrice: 32.8,
-    isHot: true,
-  },
-  {
-    id: 4,
-    name: "Kvidio Headphone 512",
-    image: productImage,
-    price: 28.85,
-    oldPrice: 32.8,
-    isHot: true,
-  },
-  {
-    id: 5,
-    name: "Kvidio Headphone 512",
-    image: productImage,
-    price: 28.85,
-    oldPrice: 32.8,
-    isHot: true,
-  },
-  {
-    id: 6,
-    name: "Kvidio Headphone 512",
-    image: productImage,
-    price: 28.85,
-    oldPrice: 32.8,
-    isHot: true,
-  },
-];
+import { useGetAllWishlist } from "../../api/api";
+import IsLoading from "../../components/IsLoading";
+import IsError from "../../components/IsError";
 
 function Wishlist() {
+  const { allWishlist, isLoading, isError, error, refetch } =
+    useGetAllWishlist();
+
+  if (isLoading) {
+    return <IsLoading />;
+  }
+
+  if (isError) {
+    return <IsError error={error} refetch={refetch} />;
+  }
+
   return (
     <div>
       <div className=" py-10">
-      
+        <h2 className="text-2xl font-bold mb-5">My Wishlist</h2>
+        <p className="text-gray-300 mb-5">
+          Here are the products you have added to your wishlist.
+        </p>
 
         {/* Product Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-5">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {allWishlist?.map((product) => (
+            <ProductCard key={product.id} product={product?.product} />
           ))}
         </div>
       </div>

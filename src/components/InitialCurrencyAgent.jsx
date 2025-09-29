@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal } from "antd";
+import { Button, message, Modal } from "antd";
 import Cookies from "js-cookie";
-import { useGetAllAgents } from "../api/api";
+import { API, useGetAllAgents, useGetMyProfile } from "../api/api";
+import EC from "../assets/ec.png";
+import UC from "../assets/uc.png";
+import AC from "../assets/ac.png";
+import CC from "../assets/cc.png";
+import YC from "../assets/yc.png";
 
-const currencies = [
-  "EUR",
-  "USD",
-  "AUD",
-  "CAD",
-  "GBP",
-  "JPY",
-  "CHF",
-  "CNY",
-  "KRW",
-];
+const currencies = ["EUR", "USD", "AUD", "CAD", "YUAN"];
 
 export default function InitialCurrencyAgent() {
   const { allAgents, isLoading, isError, error, refetch } = useGetAllAgents();
+  const { myProfile } = useGetMyProfile();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState(null);
@@ -28,26 +24,40 @@ export default function InitialCurrencyAgent() {
     const savedCurrency = Cookies.get("currency");
     const savedAgent = Cookies.get("agent");
 
-    // console.log("token", token);
-    // console.log("skipLogin", skipLogin);
-    // console.log("savedCurrency", savedCurrency);
-    // console.log("savedAgent", savedAgent);
-
     if ((token || skipLogin) && (!savedCurrency || !savedAgent)) {
       setIsModalOpen(true);
-      // console.log("Modal should open");
     } else {
       setIsModalOpen(false);
-      // console.log("Modal should NOT open");
     }
   }, []);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (selectedCurrency && selectedAgent) {
       Cookies.set("currency", selectedCurrency, { expires: 7 });
       Cookies.set("agent", selectedAgent, { expires: 7 });
+
       setIsModalOpen(false);
     }
+
+    if (myProfile.id) {
+      try {
+        const response = await API.put(`/user/currency/${myProfile.id}`, {
+          currency: selectedCurrency,
+          agent: selectedAgent,
+        });
+
+        if (response.status === 200) {
+          message.success("Agent and currency selection successful!");
+        }
+      } catch (error) {
+        message.error(
+          error?.response?.data?.message ||
+            "Agent selection failed. Please try again."
+        );
+      }
+    }
+
+    window.location.reload();
   };
 
   return (
@@ -83,6 +93,7 @@ export default function InitialCurrencyAgent() {
         {/* Currency Selection */}
         <div>
           <h3 className="text-white text-sm font-medium mb-3">Currency</h3>
+
           <div className="flex flex-wrap gap-2">
             {currencies.map((currency) => (
               <button
@@ -90,10 +101,26 @@ export default function InitialCurrencyAgent() {
                 onClick={() => setSelectedCurrency(currency)}
                 className={`py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                   selectedCurrency === currency
-                    ? "bg-blue-500 text-white"
+                    ? "bg-blue-700 text-white"
                     : "bg-[#2a2a2a] text-gray-300 hover:bg-[#363636]"
                 }`}
               >
+                <img
+                  className="w-[55px] h-[55px] bg-[#cfcbcb] rounded-full"
+                  src={
+                    currency === "EUR"
+                      ? EC
+                      : currency === "USD"
+                      ? UC
+                      : currency === "AUD"
+                      ? AC
+                      : currency === "YUAN"
+                      ? YC
+                      : CC
+                  }
+                  alt={currency}
+                />
+
                 {currency}
               </button>
             ))}
@@ -107,9 +134,9 @@ export default function InitialCurrencyAgent() {
             {allAgents.map((agent) => (
               <div
                 key={agent.agent_name}
-                onClick={() => setSelectedAgent(agent.agent_name)}
+                onClick={() => setSelectedAgent(agent.id)}
                 className={`p-3  border border-[#696969]  flex items-center gap-1 rounded-md cursor-pointer transition-colors ${
-                  selectedAgent === agent.agent_name
+                  selectedAgent === agent.id
                     ? "bg-blue-500 text-white"
                     : "bg-[#2a2a2a] text-gray-300 hover:bg-[#363636]"
                 }`}

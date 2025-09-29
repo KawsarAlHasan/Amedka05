@@ -11,22 +11,19 @@ function GoogleAuth() {
     onSuccess: async (tokenResponse) => {
       try {
 
-        console.log(tokenResponse, "tokenResponse");
        
         const res = await API.post("/auth/google", {
           token: tokenResponse.access_token,
         });
 
-        console.log(res, "res");
 
-        // localStorage.setItem("token", res.data.token);
+        localStorage.setItem("token", res.data.token);
 
-        // message.success("Login successful!", 1).then(() => {
-        //   window.location.reload();
-        // });
+        message.success("Login successful!", 1).then(() => {
+          window.location.reload();
+        });
       } catch (err) {
-        console.error("Backend error:", err);
-        message.error("Login failed. Please try again.");
+        message.error( err?.response?.data?.message ||"Login failed. Please try again.");
       }
     },
     onError: () => console.error("Login Failed"),
