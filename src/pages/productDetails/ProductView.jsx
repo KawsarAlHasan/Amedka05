@@ -2,7 +2,8 @@ import React, { useMemo, useState, useEffect } from "react";
 import { Button, Tag, Tooltip, message, Divider, Image } from "antd";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import Cookies from "js-cookie";
-import { API, useGetAllWishIds } from "../../api/api";
+import { API, useGetAllWishIds, useGetSingleAgent } from "../../api/api";
+import LoginModel from "../../components/LoginModal";
 
 export default function ProductView({ product }) {
   const { allWishlistId, refetch } = useGetAllWishIds();
@@ -11,6 +12,10 @@ export default function ProductView({ product }) {
   const [color, setColor] = useState(product?.colors?.[0]);
   const [loadingStates, setLoadingStates] = useState({});
   const savedCurrency = Cookies.get("currency");
+  const savedAgent = Cookies.get("agent");
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  const { agentDetail } = useGetSingleAgent(savedAgent);
 
   // Wishlist status check
   const isInWishlist = useMemo(() => {
@@ -62,6 +67,50 @@ export default function ProductView({ product }) {
 
   const isProductLoading = loadingStates[product?.id] || false;
 
+  // Price conversion function
+  const getConvertedPrice = (price) => {
+    if (!price || !agentDetail || !savedCurrency) return price;
+
+    const exchangeRates = {
+      EUR: agentDetail.euro_rate,
+      USD: agentDetail.usd_rate,
+      AUD: agentDetail.aud_rate,
+      CAD: agentDetail.cad_rate,
+      YUAN: agentDetail.yuan_rate,
+    };
+
+    const rate = exchangeRates[savedCurrency];
+
+    if (rate && rate > 0) {
+      return price * rate;
+    }
+
+    return price;
+  };
+
+  // Get converted prices
+  const convertedPrice = getConvertedPrice(product?.price);
+  const convertedOfferPrice = getConvertedPrice(product?.offer_price);
+
+  // Find matching affiliate based on agentId
+  const matchedAffiliate = product?.affiliates?.find(
+    (affiliate) => affiliate.agentId === agentDetail.id
+  );
+
+  const handleHeartClickWithAuth = (productId) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      Cookies.remove("skipLogin");
+      setIsLoginModalOpen(true);
+    } else {
+      handleHeartClick(productId);
+    }
+  };
+
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false);
+  };
+
   return (
     <div className="">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -106,14 +155,23 @@ export default function ProductView({ product }) {
           <Divider className="bg-gray-400 !my-[-10px]" />
 
           <div className="my-6 flex items-end gap-4">
-            <div className="text-4xl font-bold text-blue-400">
-              {getCurrencyIcon(savedCurrency)}
-              {product?.offer_price?.toFixed(2)}
-            </div>
-            <div className="text-lg line-through text-neutral-400">
-              {getCurrencyIcon(savedCurrency)}
-              {product?.price?.toFixed(2)}
-            </div>
+            {product?.offer_price ? (
+              <>
+                <div className="text-4xl font-bold text-blue-400">
+                  {getCurrencyIcon(savedCurrency)}
+                  {convertedOfferPrice?.toFixed(2)}
+                </div>
+                <div className="text-lg line-through text-neutral-400">
+                  {getCurrencyIcon(savedCurrency)}
+                  {convertedPrice?.toFixed(2)}
+                </div>
+              </>
+            ) : (
+              <div className="text-4xl font-bold text-blue-400">
+                {getCurrencyIcon(savedCurrency)}
+                {convertedPrice?.toFixed(2)}
+              </div>
+            )}
           </div>
 
           {/* Size */}
@@ -168,10 +226,10 @@ export default function ProductView({ product }) {
               type="primary"
               size="large"
               className="!w-full !h-12 !rounded-xl custom-primary-btn"
-              href={product?.affiate_link}
+              href={matchedAffiliate?.affiliate_link}
               target="_blank"
             >
-              Buy on {product?.agent?.agent_name}
+              Buy on {agentDetail?.agent_name}
             </Button>
           </div>
 
@@ -188,7 +246,7 @@ export default function ProductView({ product }) {
                     <AiOutlineHeart size={18} />
                   )
                 }
-                onClick={() => handleHeartClick(product?.id)}
+                onClick={() => handleHeartClickWithAuth(product?.id)}
                 // disabled={isProductLoading}
                 loading={isProductLoading}
                 className={`!rounded-xl !h-10 !px-3 border ${
@@ -211,10 +269,15 @@ export default function ProductView({ product }) {
               Selected: <span className="text-white font-medium">{size}</span> /
               <span className="text-white font-medium"> {color}</span>
             </div>
-            <div>SKU: {product?.id}</div>
+            {/* <div>SKU: {product?.id}</div> */}
           </div>
         </div>
       </div>
+
+      <LoginModel
+        isModalOpen={isLoginModalOpen}
+        onClose={handleCloseLoginModal}
+      />
     </div>
   );
 }

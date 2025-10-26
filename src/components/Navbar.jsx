@@ -3,7 +3,7 @@ import { FiSearch, FiHeart, FiUser, FiMenu } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/WebSheet.png";
 import { logout, useGetAllWishIds, useGetMyProfile } from "../api/api";
-
+import { MdCurrencyExchange } from "react-icons/md";
 import {
   Avatar,
   Dropdown,
@@ -18,17 +18,30 @@ import {
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import { TbCameraPlus } from "react-icons/tb";
 import axios from "axios";
+import ChangeAgentCurrency from "./ChangeAgentCurrency";
+import AccountSetting from "./AccountSetting";
+
+const VITE_AI_URL = import.meta.env.VITE_AI_URL;
 
 function Navbar() {
-   const { allWishlistId, refetch } = useGetAllWishIds();
+  const { allWishlistId, refetch } = useGetAllWishIds();
   const { myProfile, isLoading, isError } = useGetMyProfile();
   const [open, setOpen] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
+  };
+
+  const handleChangeAgent = () => {
+    setIsAgentModalOpen(true);
+  };
+
+  const handleCloseAgentModal = () => {
+    setIsAgentModalOpen(false);
   };
 
   // Handle image search
@@ -54,7 +67,7 @@ function Navbar() {
       formData.append("file", file);
 
       const response = await axios.post(
-        "http://10.10.7.75:8005/api/v1/image-analyze",
+        `${VITE_AI_URL}/api/v1/image-analyze`,
         formData,
         {
           headers: {
@@ -114,9 +127,9 @@ function Navbar() {
               size={47}
               src={myProfile?.profilePic}
               icon={<UserOutlined />}
-              className="mt-[2px]"
+              className="!mt-[-2px]"
             />
-            <div>
+            <div className="mt-1">
               <h2 className="font-semibold">{myProfile?.name || "User"}</h2>
               <p className="bg-[#006699] text-center text-[#FFF] px-3 rounded-full text-sm">
                 {myProfile?.status || "Member"}
@@ -125,6 +138,25 @@ function Navbar() {
           </div>
           <Divider className="!mb-[0px] !mt-[6px] !bg-gray-300 " />
         </div>
+      ),
+    },
+    // {
+    //   key: "account-setting",
+    //   label: (
+    //     <span>
+    //       <AccountSetting myProfile={myProfile} refetch={refetch} />
+    //     </span>
+    //   ),
+    // },
+    {
+      key: "change-agent",
+      label: (
+        <span
+          className="flex items-center gap-2 px-1 py-2 hover:bg-gray-100"
+          onClick={handleChangeAgent}
+        >
+          <MdCurrencyExchange className="text-lg" /> Change Agent & Currency
+        </span>
       ),
     },
     {
@@ -142,7 +174,7 @@ function Navbar() {
 
   return (
     <div className="border-b bg-[#3a3a3a] border-gray-300 sticky top-0 z-50">
-      <div className="container mx-auto px-2 md:px-4">
+      <div className=" px-[5px] md:px-[20px] lg:px-[160px]">
         <nav className="w-full py-3 flex items-center justify-between">
           {/* Left Side: Logo */}
           <div className="flex items-center gap-3">
@@ -214,7 +246,11 @@ function Navbar() {
             {myProfile && !isLoading && !isError ? (
               <>
                 <Link to="/favourite" className="mx-2 lg:mx-4">
-                  <Badge count={allWishlistId?.length} size="small" offset={[0, 5]}>
+                  <Badge
+                    count={allWishlistId?.length}
+                    size="small"
+                    offset={[0, 5]}
+                  >
                     <FiHeart size={26} className="cursor-pointer text-white" />
                   </Badge>
                 </Link>
@@ -223,7 +259,7 @@ function Navbar() {
                   menu={{ items: profileMenuItems }}
                   trigger={["click"]}
                   placement="bottomRight"
-                  overlayClassName="w-64"
+                  overlayClassName="w-[300px]"
                 >
                   <Avatar
                     src={myProfile?.profilePic}
@@ -300,6 +336,17 @@ function Navbar() {
             </Button>
           </Link>
 
+          <Button
+            icon={<MdCurrencyExchange />}
+            block
+            onClick={() => {
+              setOpen(false);
+              handleChangeAgent();
+            }}
+          >
+            Change Agent & Currency
+          </Button>
+
           {myProfile ? (
             <Button
               type="primary"
@@ -324,6 +371,12 @@ function Navbar() {
           )}
         </div>
       </Drawer>
+
+      {/* ChangeAgentCurrency  */}
+      <ChangeAgentCurrency
+        isModalOpen={isAgentModalOpen}
+        onClose={handleCloseAgentModal}
+      />
     </div>
   );
 }
