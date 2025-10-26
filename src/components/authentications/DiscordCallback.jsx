@@ -5,6 +5,8 @@ import axios from "axios";
 import { Spin } from "antd";
 import { FaDiscord } from "react-icons/fa";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 function DiscordCallback() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -39,7 +41,7 @@ function DiscordCallback() {
     (async () => {
       try {
         const res = await axios.post(
-          "http://localhost:3000/api/auth/discord",
+          `${BASE_URL}/api/auth/discord`,
           { code },
           {
             // withCredentials: true,

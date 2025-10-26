@@ -14,6 +14,7 @@ import AllProducts from "../pages/allProducts/AllProducts";
 import AiChat from "../pages/aiChats/AiChat";
 import AiChatLayout from "../layouts/AiChatLayout";
 import DiscordCallback from "../components/authentications/DiscordCallback";
+import PrivateRoute from "./PrivateRoute";
 
 export const router = createBrowserRouter([
   {
@@ -62,7 +63,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/favourite",
-        element: <Wishlist />,
+        element: (
+          <PrivateRoute>
+            <Wishlist />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/discord/callback",
@@ -73,7 +78,11 @@ export const router = createBrowserRouter([
 
   {
     path: "/ai-chat",
-    element: <AiChatLayout />,
+    element: (
+      <PrivateRoute>
+        <AiChatLayout />
+      </PrivateRoute>
+    ),
     children: [
       {
         path: "/ai-chat",
