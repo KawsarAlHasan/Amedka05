@@ -2,14 +2,18 @@ import { message } from "antd";
 import { useState } from "react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { API, useGetAllWishIds } from "../api/api";
+import { API, useGetAllWishIds, useGetSingleAgent } from "../api/api";
 import Cookies from "js-cookie";
+import LoginModel from "./LoginModal";
 
 function ProductCard({ product, isTargetBlank = false }) {
   const { allWishlistId, refetch } = useGetAllWishIds();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const savedCurrency = Cookies.get("currency");
   const savedAgent = Cookies.get("agent");
+
+  const { agentDetail } = useGetSingleAgent(savedAgent);
 
   const [loadingStates, setLoadingStates] = useState({});
 
@@ -49,7 +53,46 @@ function ProductCard({ product, isTargetBlank = false }) {
       CAD: "C$",
       YUAN: "¥",
     };
-    return icons[currency] || "$";
+    return icons[currency] || "¥";
+  };
+
+  // Price conversion function
+  const getConvertedPrice = (price) => {
+    if (!price || !agentDetail || !savedCurrency) return price;
+
+    const exchangeRates = {
+      EUR: agentDetail.euro_rate,
+      USD: agentDetail.usd_rate,
+      AUD: agentDetail.aud_rate,
+      CAD: agentDetail.cad_rate,
+      YUAN: agentDetail.yuan_rate,
+    };
+
+    const rate = exchangeRates[savedCurrency];
+
+    if (rate && rate > 0) {
+      return price * rate;
+    }
+
+    return price;
+  };
+
+  // Get converted prices
+  const convertedPrice = getConvertedPrice(product?.price);
+  const convertedOfferPrice = getConvertedPrice(product?.offer_price);
+
+  const handleHeartClickWithAuth = (productId) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      Cookies.remove("skipLogin");
+      setIsLoginModalOpen(true);
+    } else {
+      handleHeartClick(productId);
+    }
+  };
+
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false);
   };
 
   return (
@@ -65,12 +108,12 @@ function ProductCard({ product, isTargetBlank = false }) {
           </div>
         ) : isInWishlist ? (
           <AiFillHeart
-            onClick={() => handleHeartClick(product?.id)}
+            onClick={() => handleHeartClickWithAuth(product?.id)}
             className="absolute top-4 right-4 border text-red-500 text-3xl bg-white p-1 rounded-full cursor-pointer hover:scale-110 transition-transform"
           />
         ) : (
           <AiOutlineHeart
-            onClick={() => handleHeartClick(product?.id)}
+            onClick={() => handleHeartClickWithAuth(product?.id)}
             className="absolute top-4 right-4 border text-[#2b2b2b] text-3xl bg-white p-1 rounded-full cursor-pointer hover:scale-110 transition-transform"
           />
         )}
@@ -92,13 +135,13 @@ function ProductCard({ product, isTargetBlank = false }) {
           <div className="flex items-center gap-2 mt-2">
             <span className="text-blue-400 font-bold">
               {getCurrencyIcon(savedCurrency)}
-              {product?.price?.toFixed(2)}
+              {convertedPrice?.toFixed(2)}
             </span>
 
             {product?.offer_price && (
               <span className="text-gray-400 line-through text-sm">
                 {getCurrencyIcon(savedCurrency)}
-                {product?.offer_price?.toFixed(2)}
+                {convertedOfferPrice?.toFixed(2)}
               </span>
             )}
           </div>
@@ -111,6 +154,11 @@ function ProductCard({ product, isTargetBlank = false }) {
           </Link>
         </div>
       </div>
+
+      <LoginModel
+        isModalOpen={isLoginModalOpen}
+        onClose={handleCloseLoginModal}
+      />
     </div>
   );
 }
