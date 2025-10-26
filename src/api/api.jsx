@@ -1,8 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
+// Access Vite environment variables using import.meta.env.VITE_
+// All custom environment variables must be prefixed with VITE_
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+
 export const API = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: `${BASE_URL}/api`,
 });
 
 API.interceptors.request.use((config) => {
@@ -65,6 +70,30 @@ export const useGetAllAgents = () => {
   const { data: allAgents = [] } = response;
 
   return { allAgents, isLoading, isError, error, refetch };
+};
+
+// get single agent id
+export const useGetSingleAgent = (agentId) => {
+  const getData = async () => {
+    const response = await API.get(`/agent/${agentId}`);
+    return response.data;
+  };
+
+  const {
+    data: response = {},
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["agentDetail"],
+    queryFn: getData,
+    keepPreviousData: true,
+  });
+
+  const { data: agentDetail = {} } = response;
+
+  return { agentDetail, isLoading, isError, error, refetch };
 };
 
 // Get all Categories
