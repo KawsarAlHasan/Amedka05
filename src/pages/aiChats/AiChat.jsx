@@ -7,6 +7,9 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import ReactMarkdown from "react-markdown";
 
+const VITE_AI_URL = import.meta.env.VITE_AI_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 function AiChat() {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -42,7 +45,7 @@ function AiChat() {
   const fetchProductsByIds = async (productIds) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/product/ai-search",
+        `${BASE_URL}/api/product/ai-search`,
         {
           ids: productIds,
         }
@@ -75,7 +78,7 @@ function AiChat() {
     try {
       // Send message to AI API
       const aiResponse = await axios.post(
-        "http://10.10.7.75:8005/api/v1/chat",
+       `${VITE_AI_URL}/api/v1/chat`,
         {
           thread_id: sessionId,
           user_input: inputValue,
@@ -136,9 +139,7 @@ function AiChat() {
                     <BsLightningChargeFill className="text-blue-600" />
                   </div>
                   <div className="bg-[#1f1f1f] p-4 rounded-lg shadow-sm max-w-3xl">
-                    <p className="">
-                      <ReactMarkdown>{message.text}</ReactMarkdown>
-                    </p>
+                    <ReactMarkdown>{message.text}</ReactMarkdown>
 
                     {message.products && (
                       <div className="mt-4">

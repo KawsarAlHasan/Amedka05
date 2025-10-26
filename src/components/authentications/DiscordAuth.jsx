@@ -2,12 +2,12 @@ import { Button } from "antd";
 import React from "react";
 import { FaDiscord } from "react-icons/fa";
 
+const VITE_DISCORD_CALLBACK = import.meta.env.VITE_DISCORD_CALLBACK;
+
 function DiscordAuth() {
   const clientId = "1416113786724548620";
 
-  const redirectUri = encodeURIComponent(
-    "http://localhost:5173/discord/callback"
-  );
+  const redirectUri = encodeURIComponent(VITE_DISCORD_CALLBACK);
 
   const scope = encodeURIComponent("identify email");
 
