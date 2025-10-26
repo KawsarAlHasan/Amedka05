@@ -1,16 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../components/Navbar";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import ScrollToTop from "./ScrollToTop";
-import { Breadcrumb } from "antd";
+import { Breadcrumb, message } from "antd";
 import aiImage from "../assets/12122375 1.png";
 import InitialLoginModel from "../components/InitialLoginModel";
 import InitialCurrencyAgent from "../components/InitialCurrencyAgent";
+import LoginModel from "../components/LoginModal";
+import Cookies from "js-cookie";
 
 function MainLayout() {
   const location = useLocation();
   const pathnames = location.pathname.split("/").filter((x) => x);
+
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleAIChatNavigate = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      Cookies.remove("skipLogin");
+      setIsLoginModalOpen(true);
+    } else {
+      navigate("/ai-chat");
+    }
+  };
+
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false);
+  };
 
   return (
     <div className="bg-[#3a3a3a] min-h-screen text-[#FFFFFF] ">
@@ -59,19 +79,24 @@ function MainLayout() {
             </div>
           )}
 
-          <Link
-            to="/ai-chat"
+          <button
+            onClick={handleAIChatNavigate}
             className="custom-primary-btn flex items-center gap-2 py-2 px-8 w-[250px] rounded-full cursor-pointer fixed top-[90vh] right-0 !z-100"
           >
             <img src={aiImage} alt="logo" />
             AI Shopping Helper
-          </Link>
+          </button>
 
           <Outlet />
         </div>
 
         <Footer />
       </div>
+
+      <LoginModel
+        isModalOpen={isLoginModalOpen}
+        onClose={handleCloseLoginModal}
+      />
     </div>
   );
 }
